@@ -23,7 +23,7 @@ namespace CodeClubShmup1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-
+        public static Camera camera;
         
         public static Rectangle screen_size
         {
@@ -73,6 +73,8 @@ namespace CodeClubShmup1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            camera = new Camera(graphics);
+
             Resources.Init(Content);
             DrawSys.InitSpriteBatch(spriteBatch);
 
@@ -82,6 +84,8 @@ namespace CodeClubShmup1
             Resources.LoadTexture2D("Bullet");
             Resources.LoadTexture2D("Enemy");
             Resources.LoadTexture2D("StarWars");
+
+            Resources.LoadTexture2D("Button");
 
             Resources.LoadFont("CSfont");
 
@@ -126,6 +130,11 @@ namespace CodeClubShmup1
             if (Input.IsKeyDown(Keys.Escape))
                 this.Exit();
 
+            if (Input.IsKeyDown(Keys.L))
+                camera.addZoom(dt);
+            if (Input.IsKeyDown(Keys.K))
+                camera.addZoom(-dt);
+
 
             SceneSys.Update(dt);
 
@@ -140,7 +149,14 @@ namespace CodeClubShmup1
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Beige);
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate,
+                BlendState.AlphaBlend,
+                SamplerState.LinearClamp,
+                DepthStencilState.None,
+                RasterizerState.CullCounterClockwise,
+                null,
+                camera.update()
+                );
 
             SceneSys.Draw();
           

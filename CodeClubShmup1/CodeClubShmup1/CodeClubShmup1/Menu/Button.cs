@@ -11,8 +11,11 @@ namespace CodeClubShmup1.Objects
     public class Button
     {
         protected Sprite _sprite;
-
         protected Vector2 _position;
+
+        Vector2 text_pos;
+        string Text;
+        SpriteFont Font;
 
         public Action OnButtonPressed;
         
@@ -28,15 +31,21 @@ namespace CodeClubShmup1.Objects
             
         }
 
+        public Button(Texture2D texture, Vector2 position, string text, SpriteFont font)
+            :this(texture,position)
+        {
+            Font = font;
+            Text = text;
+
+            UpdatePositions();
+        }
+
         public void Update(float deltaTime)
         {
             _sprite.Update(deltaTime);
 
-            CollisionRect = new Rectangle(
-                (int)(_position.X - _sprite.Origin.X),
-                (int)(_position.Y - _sprite.Origin.Y),
-                _sprite.FrameWidth, _sprite.FrameHeight);
-                 
+            UpdatePositions();
+
             if (Input.IsButtonPressed())
             {
 
@@ -53,6 +62,21 @@ namespace CodeClubShmup1.Objects
         public void Draw()
         {
             _sprite.Draw(_position);
+
+            DrawSys.DrawText(Text, Font, text_pos, Color.DarkGreen);
+        }
+
+        private void UpdatePositions()
+        {
+            CollisionRect = new Rectangle(
+           (int)(_position.X - _sprite.Origin.X),
+           (int)(_position.Y - _sprite.Origin.Y),
+           _sprite.FrameWidth, _sprite.FrameHeight);
+
+            if (Text != "")
+            {
+                text_pos = _position - Font.MeasureString(Text) * 0.5f;
+            }
         }
     }
 }
